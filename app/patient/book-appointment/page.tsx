@@ -1,9 +1,9 @@
-import { auth } from '@clerk/nextjs';
+import { auth } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
 import { AppointmentBooking } from '@/components/patient/appointment-booking';
 
-export default function BookAppointmentPage() {
-  const { userId } = auth();
+export default async function BookAppointmentPage() {
+  const { userId } = await auth();
 
   if (!userId) {
     redirect('/');
