@@ -157,7 +157,7 @@ export function PatientDashboard() {
                     <div className="text-center py-8">
                       <Calendar className="h-12 w-12 text-slate-300 mx-auto mb-4" />
                       <h3 className="text-lg font-semibold text-slate-900 mb-2">No Upcoming Appointments</h3>
-                      <p className="text-slate-600 mb-4">You don't have any upcoming appointments scheduled.</p>
+                        <p className="text-slate-600 mb-4">You don&apos;t have any upcoming appointments scheduled.</p>
                       <Button className="bg-orange-600 hover:bg-orange-700">
                         <Plus className="h-4 w-4 mr-2" />
                         Book Your First Appointment

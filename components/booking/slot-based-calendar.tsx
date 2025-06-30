@@ -227,7 +227,7 @@ export function SlotBasedCalendar({ doctorId, onSlotSelect, selectedSlot }: Slot
             </div>
             <div>
               <h3 className="text-lg font-semibold text-slate-900">
-                95% patients feel satisfied after booking appointment from oladoc
+                95% patients feel satisfied after booking appointment 
               </h3>
               <p className="text-sm text-slate-600">It takes only 30 sec to book an appointment</p>
             </div>
