@@ -48,7 +48,7 @@ export function ReviewsSection() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
-          className="text-center mb-16"
+          {...{ className: "text-center mb-16" }}
         >
           <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
             What Patients Say
@@ -99,7 +99,7 @@ export function ReviewsSection() {
                       
                       {/* Review text */}
                       <p className="text-slate-700 mb-4 leading-relaxed">
-                        "{review.comment}"
+                        &quot;{review.comment}&quot;
                       </p>
                       
                       {/* Author info */}
@@ -124,7 +124,7 @@ export function ReviewsSection() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
-          className="text-center mt-12"
+          {...{ className: "text-center mt-12" }}
         >
           <p className="text-slate-600 mb-4">
             See more reviews on Google

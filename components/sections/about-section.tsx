@@ -44,7 +44,7 @@ export function AboutSection() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
-          className="text-center mb-16"
+          style={{ display: 'block', textAlign: 'center', marginBottom: '4rem' }}
         >
           <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
             About Dr. Ayesha Khan
@@ -62,7 +62,7 @@ export function AboutSection() {
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
-            className="space-y-6"
+            {...{ className: "space-y-6" }}
           >
             <h3 className="text-2xl font-bold text-slate-900">My Journey in Dermatology</h3>
             <div className="space-y-4 text-slate-600">
@@ -73,7 +73,7 @@ export function AboutSection() {
               </p>
               <p>
                 I believe in a holistic approach to dermatological care, combining the latest medical 
-                advances with personalized treatment plans tailored to each patient's unique needs. 
+                advances with personalized treatment plans tailored to each patient&apos;s unique needs. 
                 Every consultation is an opportunity to educate, heal, and empower.
               </p>
               <p>
@@ -89,7 +89,7 @@ export function AboutSection() {
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
-            className="bg-gradient-to-br from-cyan-50 to-slate-50 rounded-2xl p-8"
+            {...{ className: "bg-gradient-to-br from-cyan-50 to-slate-50 rounded-2xl p-8" }}
           >
             <h3 className="text-2xl font-bold text-slate-900 mb-6">Qualifications & Certifications</h3>
             <div className="space-y-3">
@@ -119,7 +119,7 @@ export function AboutSection() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 viewport={{ once: true }}
-                className="text-center p-6 rounded-xl bg-white border border-slate-100 shadow-lg hover:shadow-xl transition-shadow duration-300"
+                {...{ className: "text-center p-6 rounded-xl bg-white border border-slate-100 shadow-lg hover:shadow-xl transition-shadow duration-300" }}
               >
                 <div className="w-16 h-16 bg-cyan-100 rounded-full flex items-center justify-center mx-auto mb-4">
                   <specialty.icon className="h-8 w-8 text-cyan-600" />
