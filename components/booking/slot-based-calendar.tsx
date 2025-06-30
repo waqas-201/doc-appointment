@@ -10,6 +10,9 @@ import { generateTimeSlots, mockDoctors } from '@/lib/mock-data';
 import { TimeSlot, Doctor } from '@/lib/types';
 import { format, addDays, startOfWeek, isSameDay } from 'date-fns';
 
+// 👇 FIX: Cast to correct element type
+const MotionButton = motion.button as React.ComponentType<React.ButtonHTMLAttributes<HTMLButtonElement> & { whileHover?: any; whileTap?: any }>;
+
 interface SlotBasedCalendarProps {
   doctorId: string;
   onSlotSelect: (slot: TimeSlot) => void;
@@ -20,10 +23,9 @@ export function SlotBasedCalendar({ doctorId, onSlotSelect, selectedSlot }: Slot
   const [currentWeek, setCurrentWeek] = useState(startOfWeek(new Date()));
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([]);
-  const [doctor] = useState<Doctor>(mockDoctors[0]); // In real app, fetch by doctorId
+  const [doctor] = useState<Doctor>(mockDoctors[0]);
 
   useEffect(() => {
-    // Generate time slots for the selected date
     const slots = generateTimeSlots(doctorId, selectedDate);
     setTimeSlots(slots);
   }, [doctorId, selectedDate]);
@@ -43,13 +45,11 @@ export function SlotBasedCalendar({ doctorId, onSlotSelect, selectedSlot }: Slot
     return `${displayHour}:${minutes} ${ampm}`;
   };
 
-  const groupSlotsByType = (slots: TimeSlot[]) => {
-    return {
-      morning: slots.filter(slot => slot.slotType === 'morning' && slot.isAvailable),
-      afternoon: slots.filter(slot => slot.slotType === 'afternoon' && slot.isAvailable),
-      evening: slots.filter(slot => slot.slotType === 'evening' && slot.isAvailable)
-    };
-  };
+  const groupSlotsByType = (slots: TimeSlot[]) => ({
+    morning: slots.filter(slot => slot.slotType === 'morning' && slot.isAvailable),
+    afternoon: slots.filter(slot => slot.slotType === 'afternoon' && slot.isAvailable),
+    evening: slots.filter(slot => slot.slotType === 'evening' && slot.isAvailable),
+  });
 
   const groupedSlots = groupSlotsByType(timeSlots);
 
@@ -60,8 +60,8 @@ export function SlotBasedCalendar({ doctorId, onSlotSelect, selectedSlot }: Slot
         <CardContent className="p-6">
           <div className="flex items-center gap-4">
             <div className="w-16 h-16 rounded-full overflow-hidden bg-cyan-100">
-              <img 
-                src={doctor.profileImage} 
+              <img
+                src={doctor.profileImage}
                 alt={`${doctor.user.firstName} ${doctor.user.lastName}`}
                 className="w-full h-full object-cover"
               />
@@ -102,21 +102,13 @@ export function SlotBasedCalendar({ doctorId, onSlotSelect, selectedSlot }: Slot
               Select Date
             </CardTitle>
             <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => navigateWeek('prev')}
-              >
+              <Button variant="outline" size="sm" onClick={() => navigateWeek('prev')}>
                 <ChevronLeft className="h-4 w-4" />
               </Button>
               <span className="text-sm font-medium px-4">
                 {format(currentWeek, 'MMM yyyy')}
               </span>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => navigateWeek('next')}
-              >
+              <Button variant="outline" size="sm" onClick={() => navigateWeek('next')}>
                 <ChevronRight className="h-4 w-4" />
               </Button>
             </div>
@@ -128,18 +120,19 @@ export function SlotBasedCalendar({ doctorId, onSlotSelect, selectedSlot }: Slot
               const isSelected = isSameDay(day, selectedDate);
               const isToday = isSameDay(day, new Date());
               const isPast = day < new Date() && !isToday;
-              
+
               return (
-                <motion.button
+                <MotionButton
                   key={index}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => setSelectedDate(day)}
                   disabled={isPast}
+                  type="button"
                   className={`
                     p-3 rounded-lg text-center transition-all duration-200
-                    ${isSelected 
-                      ? 'bg-orange-500 text-white shadow-lg' 
+                    ${isSelected
+                      ? 'bg-orange-500 text-white shadow-lg'
                       : isPast
                       ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
                       : 'bg-white border border-slate-200 hover:border-orange-300 hover:bg-orange-50'
@@ -155,7 +148,7 @@ export function SlotBasedCalendar({ doctorId, onSlotSelect, selectedSlot }: Slot
                   {isToday && !isSelected && (
                     <div className="w-1 h-1 bg-orange-500 rounded-full mx-auto mt-1"></div>
                   )}
-                </motion.button>
+                </MotionButton>
               );
             })}
           </div>
@@ -171,107 +164,57 @@ export function SlotBasedCalendar({ doctorId, onSlotSelect, selectedSlot }: Slot
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
-          {/* Morning Slots */}
-          {groupedSlots.morning.length > 0 && (
-            <div>
-              <div className="flex items-center gap-2 mb-3">
-                <div className="w-6 h-6 bg-yellow-100 rounded-full flex items-center justify-center">
-                  <span className="text-yellow-600 text-xs">☀️</span>
-                </div>
-                <h3 className="font-semibold text-slate-900">Morning Slots</h3>
-              </div>
-              <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
-                {groupedSlots.morning.map((slot) => (
-                  <motion.button
-                    key={slot.id}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => onSlotSelect(slot)}
-                    className={`
-                      p-3 rounded-lg border text-sm font-medium transition-all duration-200
-                      ${selectedSlot?.id === slot.id
-                        ? 'bg-orange-500 text-white border-orange-500 shadow-lg'
-                        : 'bg-white border-slate-200 text-slate-700 hover:border-orange-300 hover:bg-orange-50'
-                      }
-                    `}
-                  >
-                    {formatTime(slot.startTime)}
-                  </motion.button>
-                ))}
-              </div>
-            </div>
-          )}
+          {['morning', 'afternoon', 'evening'].map(period => {
+            const emoji = period === 'morning' ? '☀️' : period === 'afternoon' ? '☀️' : '🌙';
+            const bgColor = period === 'morning' ? 'bg-yellow-100 text-yellow-600' :
+              period === 'afternoon' ? 'bg-orange-100 text-orange-600' : 'bg-purple-100 text-purple-600';
+            const label = `${period.charAt(0).toUpperCase()}${period.slice(1)} Slots`;
 
-          {/* Afternoon Slots */}
-          {groupedSlots.afternoon.length > 0 && (
-            <div>
-              <div className="flex items-center gap-2 mb-3">
-                <div className="w-6 h-6 bg-orange-100 rounded-full flex items-center justify-center">
-                  <span className="text-orange-600 text-xs">☀️</span>
-                </div>
-                <h3 className="font-semibold text-slate-900">Afternoon Slots</h3>
-              </div>
-              <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
-                {groupedSlots.afternoon.map((slot) => (
-                  <motion.button
-                    key={slot.id}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => onSlotSelect(slot)}
-                    className={`
-                      p-3 rounded-lg border text-sm font-medium transition-all duration-200
-                      ${selectedSlot?.id === slot.id
-                        ? 'bg-orange-500 text-white border-orange-500 shadow-lg'
-                        : 'bg-white border-slate-200 text-slate-700 hover:border-orange-300 hover:bg-orange-50'
-                      }
-                    `}
-                  >
-                    {formatTime(slot.startTime)}
-                  </motion.button>
-                ))}
-              </div>
-            </div>
-          )}
+            const slots = groupedSlots[period as keyof typeof groupedSlots];
+            if (slots.length === 0) return null;
 
-          {/* Evening Slots */}
-          {groupedSlots.evening.length > 0 && (
-            <div>
-              <div className="flex items-center gap-2 mb-3">
-                <div className="w-6 h-6 bg-purple-100 rounded-full flex items-center justify-center">
-                  <span className="text-purple-600 text-xs">🌙</span>
+            return (
+              <div key={period}>
+                <div className="flex items-center gap-2 mb-3">
+                  <div className={`w-6 h-6 ${bgColor.split(' ')[0]} rounded-full flex items-center justify-center`}>
+                    <span className={`${bgColor.split(' ')[1]} text-xs`}>{emoji}</span>
+                  </div>
+                  <h3 className="font-semibold text-slate-900">{label}</h3>
                 </div>
-                <h3 className="font-semibold text-slate-900">Evening Slots</h3>
+                <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                  {slots.map(slot => (
+                    <MotionButton
+                      key={slot.id}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => onSlotSelect(slot)}
+                      type="button"
+                      className={`
+                        p-3 rounded-lg border text-sm font-medium transition-all duration-200
+                        ${selectedSlot?.id === slot.id
+                          ? 'bg-orange-500 text-white border-orange-500 shadow-lg'
+                          : 'bg-white border-slate-200 text-slate-700 hover:border-orange-300 hover:bg-orange-50'
+                        }
+                      `}
+                    >
+                      {formatTime(slot.startTime)}
+                    </MotionButton>
+                  ))}
+                </div>
               </div>
-              <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
-                {groupedSlots.evening.map((slot) => (
-                  <motion.button
-                    key={slot.id}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => onSlotSelect(slot)}
-                    className={`
-                      p-3 rounded-lg border text-sm font-medium transition-all duration-200
-                      ${selectedSlot?.id === slot.id
-                        ? 'bg-orange-500 text-white border-orange-500 shadow-lg'
-                        : 'bg-white border-slate-200 text-slate-700 hover:border-orange-300 hover:bg-orange-50'
-                      }
-                    `}
-                  >
-                    {formatTime(slot.startTime)}
-                  </motion.button>
-                ))}
-              </div>
-            </div>
-          )}
+            );
+          })}
 
-          {/* No slots available */}
-          {groupedSlots.morning.length === 0 && groupedSlots.afternoon.length === 0 && groupedSlots.evening.length === 0 && (
-            <div className="text-center py-8">
-              <Clock className="h-12 w-12 text-slate-300 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-slate-900 mb-2">No Available Slots</h3>
-              <p className="text-slate-600">Please select a different date to see available time slots.</p>
-            </div>
-          )}
+          {/* No Slots Fallback */}
+          {groupedSlots.morning.length === 0 &&
+            groupedSlots.afternoon.length === 0 &&
+            groupedSlots.evening.length === 0 && (
+              <div className="text-center py-8">
+                <Clock className="h-12 w-12 text-slate-300 mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-slate-900 mb-2">No Available Slots</h3>
+                <p className="text-slate-600">Please select a different date to see available time slots.</p>
+              </div>
+            )}
         </CardContent>
       </Card>
 
